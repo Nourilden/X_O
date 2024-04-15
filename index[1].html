@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 5px;
+      margin: 20px auto;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      border: 2px solid #333;
+      font-size: 2em;
+      cursor: pointer;
+    }
+
+    .cell:hover {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+
+<div id="board"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const board = document.getElementById('board');
+    let currentPlayer = 'X';
+    let cells = Array.from({ length: 9 });
+
+    cells.forEach((_, index) => {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.dataset.index = index;
+      cell.addEventListener('click', () => handleCellClick(index));
+      board.appendChild(cell);
+    });
+
+    function handleCellClick(index) {
+      if (cells[index] || checkWinner()) {
+        return;
+      }
+
+      cells[index] = currentPlayer;
+      renderBoard();
+      const winner = checkWinner();
+
+      if (winner) {
+        alert(`Player ${winner} wins!`);
+        resetGame();
+      } else if (cells.every(cell => cell)) {
+        alert('It\'s a tie!');
+        resetGame();
+      } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      }
+    }
+
+    function renderBoard() {
+      cells.forEach((value, index) => {
+        const cell = board.children[index];
+        cell.textContent = value || '';
+      });
+    }
+
+    function checkWinner() {
+      const winPatterns = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+
+      for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+          return cells[a];
+        }
+      }
+
+      return null;
+    }
+
+    function resetGame() {
+      cells = Array.from({ length: 9 });
+      currentPlayer = 'X';
+      renderBoard();
+    }
+  });
+</script>
+
+</body>
+</html>
